@@ -1,0 +1,7 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": "research/claude-design-research.md", "reason": "Claude Artifacts/Code/UI 风格参考"}
+{"file": "research/technical-feasibility.md", "reason": "技术选型与架构方案"}
+{"file": "research/figma-make-ai-research.md", "reason": "竞品功能与定价分析"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "前端开发规范索引"}
+{"file": ".trellis/spec/backend/index.md", "reason": "后端开发规范索引"}
+{"file": ".trellis/spec/guides/index.md", "reason": "跨层思维指南"}

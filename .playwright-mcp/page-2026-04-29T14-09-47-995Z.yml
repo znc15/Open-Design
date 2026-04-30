@@ -1,0 +1,50 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - button "切换侧边栏" [ref=e5]:
+          - img
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - generic [ref=e10]: OpenDesign
+      - generic [ref=e11]:
+        - button "选择模型" [ref=e12]:
+          - text: 选择模型
+          - img
+        - button "设置" [ref=e13]:
+          - img
+    - generic [ref=e14]:
+      - complementary [ref=e15]:
+        - navigation [ref=e16]:
+          - list [ref=e17]:
+            - listitem [ref=e18]:
+              - button "对话" [ref=e19]:
+                - img
+                - text: 对话
+            - listitem [ref=e20]:
+              - button "项目" [ref=e21]:
+                - img
+                - text: 项目
+            - listitem [ref=e22]:
+              - button "设置" [ref=e23]:
+                - img
+                - text: 设置
+        - separator [ref=e24]
+        - button "收起侧边栏" [ref=e26]:
+          - img
+          - text: 收起侧边栏
+      - main [ref=e27]:
+        - generic [ref=e29]:
+          - heading "OpenDesign" [level=2] [ref=e30]
+          - paragraph [ref=e31]: 描述你想要的 UI，我来生成代码
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - textbox "请先在顶栏选择一个模型..." [ref=e34]
+            - button "发送消息" [disabled]:
+              - img
+          - paragraph [ref=e35]: Shift+Enter 换行 · Enter 发送
+    - contentinfo [ref=e36]:
+      - generic [ref=e38]: 未选择模型
+      - generic [ref=e40]: OpenDesign v0.1.0
+  - button "Open Next.js Dev Tools" [ref=e46] [cursor=pointer]:
+    - img [ref=e47]
