@@ -7,15 +7,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Bot, Sparkles, Info, Globe, MousePointer2 } from "lucide-react";
+import { Bot, Sparkles, Info, Globe, MousePointer2, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModelProviderSettings } from "./model-provider-settings";
 import { SkillManagement } from "./skill-management";
 import { AboutPage } from "./about-page";
 import { SearchSettings } from "./search-settings";
 import { ElementSelectionSettings } from "./element-selection-settings";
+import { AppearanceSettings } from "./appearance-settings";
 
-type SettingsTab = "models" | "search" | "skills" | "element" | "about";
+type SettingsTab = "models" | "search" | "skills" | "element" | "appearance" | "about";
 
 interface SettingsDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ const TABS: Array<{ id: SettingsTab; label: string; icon: React.ReactNode }> = [
   { id: "search", label: "联网搜索", icon: <Globe className="size-4" /> },
   { id: "skills", label: "Skill 管理", icon: <Sparkles className="size-4" /> },
   { id: "element", label: "元素选中", icon: <MousePointer2 className="size-4" /> },
+  { id: "appearance", label: "外观", icon: <Palette className="size-4" /> },
   { id: "about", label: "关于", icon: <Info className="size-4" /> },
 ];
 
@@ -68,6 +70,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             {activeTab === "search" && <SearchSettings />}
             {activeTab === "skills" && <SkillManagement />}
             {activeTab === "element" && <ElementSelectionSettings />}
+            {activeTab === "appearance" && <AppearanceSettings />}
             {activeTab === "about" && <AboutPage />}
           </div>
         </div>
