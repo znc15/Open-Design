@@ -1,94 +1,57 @@
-# Cross-Layer Thinking Guide
+# 跨层思考指南
 
-> **Purpose**: Think through data flow across layers before implementing.
-
----
-
-## The Problem
-
-**Most bugs happen at layer boundaries**, not within layers.
-
-Common cross-layer bugs:
-- API returns format A, frontend expects format B
-- Database stores X, service transforms to Y, but loses data
-- Multiple layers implement the same logic differently
+> 修改涉及多个层的代码前，用这个清单自检。
 
 ---
 
-## Before Implementing Cross-Layer Features
-
-### Step 1: Map the Data Flow
-
-Draw out how data moves:
+## 层级架构
 
 ```
-Source → Transform → Store → Retrieve → Transform → Display
+UI 组件 (components/)
+  ↕ 双向绑定
+Zustand Store (stores/)
+  ↕ 调用
+服务层 (services/)
+  ↕ HTTP / WebSocket
+外部 API (OpenAI / Ollama / Tavily)
 ```
 
-For each arrow, ask:
-- What format is the data in?
-- What could go wrong?
-- Who is responsible for validation?
+---
 
-### Step 2: Identify Boundaries
+## 读流检查（数据从外到内）
 
-| Boundary | Common Issues |
-|----------|---------------|
-| API ↔ Service | Type mismatches, missing fields |
-| Service ↔ Database | Format conversions, null handling |
-| Backend ↔ Frontend | Serialization, date formats |
-| Component ↔ Component | Props shape changes |
+- [ ] API 响应 → StreamChunk 类型是否正确映射？
+- [ ] StreamChunk → ContentBlock 转换是否完整？
+- [ ] ContentBlock → UI 渲染是否覆盖所有 type？
+- [ ] 错误响应是否传播到 UI（toast / 消息状态）？
 
-### Step 3: Define Contracts
+## 写流检查（数据从内到外）
 
-For each boundary:
-- What is the exact input format?
-- What is the exact output format?
-- What errors can occur?
+- [ ] UI 输入 → store action 参数是否类型安全？
+- [ ] Store action → 服务层调用是否传入正确配置？
+- [ ] 服务层 → API 请求是否包含必要字段（model, messages, apiKey）？
+- [ ] 流式响应是否正确累加（不覆盖之前内容）？
 
 ---
 
-## Common Cross-Layer Mistakes
+## 类型传递检查
 
-### Mistake 1: Implicit Format Assumptions
-
-**Bad**: Assuming date format without checking
-
-**Good**: Explicit format conversion at boundaries
-
-### Mistake 2: Scattered Validation
-
-**Bad**: Validating the same thing in multiple layers
-
-**Good**: Validate once at the entry point
-
-### Mistake 3: Leaky Abstractions
-
-**Bad**: Component knows about database schema
-
-**Good**: Each layer only knows its neighbors
+- [ ] 跨层传递的数据是否有共享类型定义（`src/types/`）？
+- [ ] 是否有隐式 `any` 在层边界？
+- [ ] 枚举值是否跨层一致（如 `ContentBlockType`）？
 
 ---
 
-## Checklist for Cross-Layer Features
+## 错误传播检查
 
-Before implementation:
-- [ ] Mapped the complete data flow
-- [ ] Identified all layer boundaries
-- [ ] Defined format at each boundary
-- [ ] Decided where validation happens
-
-After implementation:
-- [ ] Tested with edge cases (null, empty, invalid)
-- [ ] Verified error handling at each boundary
-- [ ] Checked data survives round-trip
+- [ ] 外部 API 错误是否映射到用户可理解的提示？
+- [ ] 流式错误是否终止循环并重置 `isStreaming`？
+- [ ] 网络断开时是否有降级行为？
 
 ---
 
-## When to Create Flow Documentation
+## 本项目特殊点
 
-Create detailed flow docs when:
-- Feature spans 3+ layers
-- Multiple teams are involved
-- Data format is complex
-- Feature has caused bugs before
+- **模型适配器运行在客户端**：没有服务端代理，API Key 存储在浏览器
+- **流式响应是核心路径**：所有模型交互都通过 `AsyncGenerator`
+- **Store 间有跨域读取**：`chat-store` 读取 `canvas-store` 和 `app-store`

@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 ./.trellis/scripts/task.py create \"brainstorm: 修改设置中的圆角配置\" --slug corner-radius-setting)",
+      "Bash(python3 ./.trellis/scripts/task.py start 05-01-corner-radius-setting)",
+      "Bash(python3 ./.trellis/scripts/get_context.py --mode packages)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx next *)",
+      "Bash(pnpm lint *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
+      "Bash(python3 ./.trellis/scripts/task.py current --source)",
+      "Bash(python3 ./.trellis/scripts/task.py list --mine)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python ./.trellis/scripts/get_context.py --mode record)",
+      "Bash(python ./.trellis/scripts/get_context.py)"
+    ]
+  }
+}

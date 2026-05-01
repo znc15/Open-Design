@@ -1,105 +1,59 @@
-# Code Reuse Thinking Guide
+# 代码复用思考指南
 
-> **Purpose**: Stop and think before creating new code - does it already exist?
-
----
-
-## The Problem
-
-**Duplicated code is the #1 source of inconsistency bugs.**
-
-When you copy-paste or rewrite existing logic:
-- Bug fixes don't propagate
-- Behavior diverges over time
-- Codebase becomes harder to understand
+> 创建新组件或工具函数前，用这个清单自检。
 
 ---
 
-## Before Writing New Code
+## 复用检查清单
 
-### Step 1: Search First
+### 1. 搜索现有实现
 
-```bash
-# Search for similar function names
-grep -r "functionName" .
+- [ ] 在 `src/components/` 下搜索功能相似的组件
+- [ ] 在 `src/stores/` 下搜索功能相似的 store/action
+- [ ] 在 `src/lib/` 下搜索功能相似的工具函数
+- [ ] 在 `src/services/` 下搜索功能相似的服务方法
 
-# Search for similar logic
-grep -r "keyword" .
-```
+### 2. 评估复用可行性
 
-### Step 2: Ask These Questions
+- [ ] 现有实现是否满足 80% 需求？
+- [ ] 差异部分是否可以通过 props / 参数覆盖？
+- [ ] 修改现有实现是否比新建更安全？
 
-| Question | If Yes... |
-|----------|-----------|
-| Does a similar function exist? | Use or extend it |
-| Is this pattern used elsewhere? | Follow the existing pattern |
-| Could this be a shared utility? | Create it in the right place |
-| Am I copying code from another file? | **STOP** - extract to shared |
+### 3. 决策
 
----
-
-## Common Duplication Patterns
-
-### Pattern 1: Copy-Paste Functions
-
-**Bad**: Copying a validation function to another file
-
-**Good**: Extract to shared utilities, import where needed
-
-### Pattern 2: Similar Components
-
-**Bad**: Creating a new component that's 80% similar to existing
-
-**Good**: Extend existing component with props/variants
-
-### Pattern 3: Repeated Constants
-
-**Bad**: Defining the same constant in multiple files
-
-**Good**: Single source of truth, import everywhere
+- **复用**：差异 < 20%，通过参数扩展
+- **提取**：多处使用相同逻辑，提取到 `src/lib/` 或 `src/types/`
+- **新建**：无相似实现，或差异 > 50%
 
 ---
 
-## When to Abstract
+## 本项目已知可复用模块
 
-**Abstract when**:
-- Same code appears 3+ times
-- Logic is complex enough to have bugs
-- Multiple people might need this
-
-**Don't abstract when**:
-- Only used once
-- Trivial one-liner
-- Abstraction would be more complex than duplication
-
----
-
-## After Batch Modifications
-
-When you've made similar changes to multiple files:
-
-1. **Review**: Did you catch all instances?
-2. **Search**: Run grep to find any missed
-3. **Consider**: Should this be abstracted?
+| 模块 | 路径 | 用途 |
+|------|------|------|
+| `cn()` | `src/lib/utils.ts` | Tailwind 类名合并 |
+| `ModelAdapter` | `src/services/model-adapter.ts` | 模型适配器接口 |
+| `ModelService` | `src/services/model-service.ts` | 模型服务单例 |
+| `extractCodeFromMarkdown()` | `src/lib/prompts/system.ts` | Markdown 代码提取 |
+| `tavilySearch()` | `src/lib/search/tavily.ts` | 联网搜索 |
+| `ContentBlock` 类型 | `src/types/chat.ts` | 内容块联合类型 |
+| `ModelConfig` 类型 | `src/types/chat.ts` | 模型配置接口 |
 
 ---
 
-## Gotcha: Asymmetric Mechanisms Producing Same Output
+## 提取模式
 
-**Problem**: When two different mechanisms must produce the same file set (e.g., recursive directory copy for init vs. manual `files.set()` for update), structural changes (renaming, moving, adding subdirectories) only propagate through the automatic mechanism. The manual one silently drifts.
+当发现 2+ 处使用相同逻辑时：
 
-**Symptom**: Init works perfectly, but update creates files at wrong paths or misses files entirely.
-
-**Prevention checklist**:
-- [ ] When migrating directory structures, search for ALL code paths that reference the old structure
-- [ ] If one path is auto-derived (glob/copy) and another is manually listed, the manual one needs updating
-- [ ] Add a regression test that compares outputs from both mechanisms
+1. 提取到 `src/lib/` 下的独立文件
+2. 导出纯函数（不依赖 React hooks）
+3. 在使用处通过 `@/lib/xxx` 导入
+4. 更新此指南的可复用模块表
 
 ---
 
-## Checklist Before Commit
+## 禁止模式
 
-- [ ] Searched for existing similar code
-- [ ] No copy-pasted logic that should be shared
-- [ ] Constants defined in one place
-- [ ] Similar patterns follow same structure
+- 不要在多个组件中复制粘贴相同逻辑
+- 不要在 store action 中重复相同的错误处理代码（提取为工具函数）
+- 不要为一次性使用创建过度抽象的工具函数
